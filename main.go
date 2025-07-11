@@ -7,7 +7,7 @@ import (
 	"net/http"
 )
 
-type TaskRequest struct {
+type RequestBody struct {
 	Task string `json:"task"`
 }
 
@@ -17,8 +17,9 @@ func getTask(c echo.Context) error {
 	response := fmt.Sprintf("hello, %s", task)
 	return c.String(http.StatusOK, response)
 }
-func postTask(c echo.Context) error {
-	var requestBody TaskRequest
+
+func createTask(c echo.Context) error {
+	var requestBody RequestBody
 
 	if err := c.Bind(&requestBody); err != nil {
 		return c.JSON(http.StatusBadRequest, map[string]string{"error": "Неверный формат JSON"})
@@ -27,8 +28,7 @@ func postTask(c echo.Context) error {
 	task = requestBody.Task
 
 	return c.JSON(http.StatusCreated, map[string]interface{}{
-		"message": "Задача сохранена",
-		"task":    requestBody.Task,
+		"task": requestBody.Task,
 	})
 }
 
@@ -39,7 +39,7 @@ func main() {
 	e.Use(middleware.Logger())
 
 	e.GET("/get", getTask)
-	e.POST("/post", postTask)
+	e.POST("/post", createTask)
 
 	e.Start("localhost:8080")
 }
