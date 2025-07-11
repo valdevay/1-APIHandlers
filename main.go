@@ -2,9 +2,10 @@ package main
 
 import (
 	"fmt"
+	"net/http"
+
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
-	"net/http"
 )
 
 type RequestBody struct {
@@ -14,7 +15,7 @@ type RequestBody struct {
 var task string
 
 func getTask(c echo.Context) error {
-	response := fmt.Sprintf("hello, %s", task)
+	response := fmt.Sprintf("Привет, %s", task)
 	return c.String(http.StatusOK, response)
 }
 
