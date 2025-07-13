@@ -32,7 +32,7 @@ type RequestBody struct {
 }
 
 type Task struct {
-	ID     int    `json:"id" gorm:"primaryKey"`
+	ID     int    `json:"id" gorm:"primaryKey;autoIncrement"`
 	Task   string `json:"task"`
 	IsDone bool   `json:"is_done"`
 }
