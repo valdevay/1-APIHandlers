@@ -4,7 +4,6 @@ import (
 	"log"
 
 	"example.com/mymodule/internal/db"
-	"example.com/mymodule/internal/handlers"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 )
@@ -19,7 +18,7 @@ func main() {
 
 	taskRepo := taskService.NewTaskRepository(database)
 	taskService := taskService.NewTaskService(taskRepo)
-	taskHandler := handlers.NewTaskHandler(taskService)
+	taskHandler := taskService.NewTaskRepository(taskService)
 
 	e.Use(middleware.CORS())
 	e.Use(middleware.Logger())
