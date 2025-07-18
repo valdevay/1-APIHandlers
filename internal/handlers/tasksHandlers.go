@@ -4,33 +4,36 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/labstack/echo"
-	"github.com/valdevay/1-APIHandlers/internal/taskService"
+	"github.com/labstack/echo/v4"
+	taskservice "github.com/valdevay/1-APIHandlers/internal/taskService"
 )
 
 type TaskHandler struct {
-	service taskService.TaskService
+	service taskservice.TaskService
 }
 
-func NewTaskHandler(s taskService.TaskService) *TaskHandler {
+func NewTaskHandler(s taskservice.TaskService) *TaskHandler {
 	return &TaskHandler{service: s}
 }
 
 func (h *TaskHandler) GetTasks(c echo.Context) error {
-	tasks, err := h.service.GetAllTasks()
+
+	tasks, err := h.service.(interface {
+		GetAllTasks() ([]taskservice.Task, error)
+	}).GetAllTasks()
 	if err != nil {
-		return c.JSON(http.StatusInternalServerError, map[string]string{"error": "Could not get tasks"})
+		return c.JSON(http.StatusInternalServerError, map[string]string{"error": "Could not fetch tasks"})
 	}
 	return c.JSON(http.StatusOK, tasks)
 }
 
 func (h *TaskHandler) CreateTask(c echo.Context) error {
-	var requestBody taskService.RequestBody
+	var requestBody taskservice.RequestBody
 	if err := c.Bind(&requestBody); err != nil {
 		return c.JSON(http.StatusBadRequest, map[string]string{"error": "Bad JSON"})
 	}
 
-	task := taskService.Task{Task: requestBody.Task, IsDone: requestBody.IsDone}
+	task := taskservice.Task{Task: requestBody.Task, IsDone: requestBody.IsDone}
 	createdTask, err := h.service.CreateTask(task)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, map[string]string{"error": "Could not create task"})
@@ -46,12 +49,12 @@ func (h *TaskHandler) UpdateTask(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, map[string]string{"error": "Bad task ID"})
 	}
 
-	var requestBody taskService.RequestBody
+	var requestBody taskservice.RequestBody
 	if err := c.Bind(&requestBody); err != nil {
 		return c.JSON(http.StatusBadRequest, map[string]string{"error": "Bad JSON"})
 	}
 
-	task := taskService.Task{
+	task := taskservice.Task{
 		Task:   requestBody.Task,
 		IsDone: requestBody.IsDone,
 	}

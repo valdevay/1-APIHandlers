@@ -3,9 +3,11 @@ package main
 import (
 	"log"
 
-	"example.com/mymodule/internal/db"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
+	"github.com/valdevay/1-APIHandlers/internal/db"
+	"github.com/valdevay/1-APIHandlers/internal/handlers"
+	taskservice "github.com/valdevay/1-APIHandlers/internal/taskService"
 )
 
 func main() {
@@ -16,9 +18,9 @@ func main() {
 
 	e := echo.New()
 
-	taskRepo := taskService.NewTaskRepository(database)
-	taskService := taskService.NewTaskService(taskRepo)
-	taskHandler := taskService.NewTaskRepository(taskService)
+	taskRepo := taskservice.NewTaskRepository(database)
+	taskService := taskservice.NewTaskService(taskRepo)
+	taskHandler := handlers.NewTaskHandler(taskService)
 
 	e.Use(middleware.CORS())
 	e.Use(middleware.Logger())

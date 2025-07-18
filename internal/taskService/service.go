@@ -2,31 +2,27 @@ package taskservice
 
 type TaskService interface {
 	CreateTask(task Task) (Task, error)
-	GetTask(id int) (Task, error)
 	UpdateTask(id int, task Task) (Task, error)
 	DeleteTask(id int) error
+	GetAllTasks() ([]Task, error)
 }
 
-type taskService struct {
+type TasksService struct {
 	TaskRepository
 }
 
 func NewTaskService(repo TaskRepository) TaskService {
-	return &taskService{TaskRepository: repo}
+	return &TasksService{TaskRepository: repo}
 }
 
-func (s *taskService) CreateTask(task Task) (Task, error) {
-	return s.TaskRepository.CreateTask(task)
+func (s *TasksService) GetAllTasks() ([]Task, error) {
+	return s.TaskRepository.GetAllTasks()
 }
 
-func (s *taskService) GetTask(id int) (Task, error) {
-	return s.TaskRepository.GetTask(id)
-}
-
-func (s *taskService) UpdateTask(id int, task Task) (Task, error) {
+func (s *TasksService) UpdateTask(id int, task Task) (Task, error) {
 	return s.TaskRepository.UpdateTask(id, task)
 }
 
-func (s *taskService) DeleteTask(id int) error {
+func (s *TasksService) DeleteTask(id int) error {
 	return s.TaskRepository.DeleteTask(id)
 }

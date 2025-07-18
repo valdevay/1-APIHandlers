@@ -3,7 +3,7 @@ package db
 import (
 	"log"
 
-	taskservice "example.com/mymodule/internal/taskService"
+	taskservice "github.com/valdevay/1-APIHandlers/internal/taskService"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
