@@ -103,6 +103,7 @@ require (
 	github.com/hashicorp/go-cleanhttp v0.5.2 // indirect
 	github.com/hashicorp/go-multierror v1.1.1 // indirect
 	github.com/hashicorp/go-retryablehttp v0.7.8 // indirect
+	github.com/iancoleman/strcase v0.3.0 // indirect
 	github.com/jackc/chunkreader/v2 v2.0.1 // indirect
 	github.com/jackc/pgconn v1.14.3 // indirect
 	github.com/jackc/pgerrcode v0.0.0-20240316143900-6e2875d9b438 // indirect
@@ -129,6 +130,7 @@ require (
 	github.com/labstack/echo/v4 v4.13.4 // indirect
 	github.com/labstack/gommon v0.4.2 // indirect
 	github.com/lib/pq v1.10.9 // indirect
+	github.com/lyft/protoc-gen-star/v2 v2.0.4-0.20230330145011-496ad1ac90a4 // indirect
 	github.com/mattn/go-colorable v0.1.14 // indirect
 	github.com/mattn/go-isatty v0.0.20 // indirect
 	github.com/mattn/go-sqlite3 v1.14.28 // indirect
@@ -155,6 +157,7 @@ require (
 	github.com/shopspring/decimal v1.4.0 // indirect
 	github.com/sirupsen/logrus v1.9.3 // indirect
 	github.com/snowflakedb/gosnowflake v1.15.0 // indirect
+	github.com/spf13/afero v1.10.0 // indirect
 	github.com/spiffe/go-spiffe/v2 v2.5.0 // indirect
 	github.com/stretchr/objx v0.5.2 // indirect
 	github.com/stretchr/testify v1.10.0 // indirect
@@ -206,12 +209,17 @@ require (
 	lukechampine.com/uint128 v1.3.0 // indirect
 	modernc.org/b v1.1.0 // indirect
 	modernc.org/cc/v3 v3.41.0 // indirect
+	modernc.org/cc/v4 v4.26.2 // indirect
 	modernc.org/ccgo/v3 v3.17.0 // indirect
+	modernc.org/ccgo/v4 v4.28.0 // indirect
 	modernc.org/db v1.0.16 // indirect
 	modernc.org/file v1.0.12 // indirect
 	modernc.org/fileutil v1.3.8 // indirect
+	modernc.org/gc/v2 v2.6.5 // indirect
 	modernc.org/golex v1.1.0 // indirect
 	modernc.org/internal v1.1.3 // indirect
+	modernc.org/lex v1.1.1 // indirect
+	modernc.org/lexer v1.0.5 // indirect
 	modernc.org/libc v1.66.3 // indirect
 	modernc.org/lldb v1.0.8 // indirect
 	modernc.org/mathutil v1.7.1 // indirect
