@@ -25,10 +25,10 @@ func main() {
 	e.Use(middleware.CORS())
 	e.Use(middleware.Logger())
 
-	e.GET("/get", taskHandler.GetTasks)
-	e.POST("/post", taskHandler.CreateTask)
-	e.PUT("/put/:id", taskHandler.UpdateTask)
-	e.DELETE("/delete/:id", taskHandler.DeleteTask)
+	e.GET("/tasks", taskHandler.GetTasks)
+	e.POST("/tasks", taskHandler.CreateTask)
+	e.PATCH("/tasks/:id", taskHandler.UpdateTask)
+	e.DELETE("/tasks/:id", taskHandler.DeleteTask)
 
 	e.Start("localhost:8080")
 }
