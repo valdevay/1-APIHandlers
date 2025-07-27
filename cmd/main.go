@@ -16,19 +16,21 @@ func main() {
 		log.Fatalf("Could not connect to database: %v", err)
 	}
 
+	repo := taskservice.NewTaskRepository(database)
+	service := taskservice.NewTaskService(repo)
+	handler := handlers.NewTaskHandler(service)
+
 	e := echo.New()
 
-	taskRepo := taskservice.NewTaskRepository(database)
-	taskService := taskservice.NewTaskService(taskRepo)
-	taskHandler := handlers.NewTaskHandler(taskService)
-
-	e.Use(middleware.CORS())
+	// используем Logger и Recover
 	e.Use(middleware.Logger())
+	e.Use(middleware.Recover())
 
-	e.GET("/tasks", taskHandler.GetTasks)
-	e.POST("/tasks", taskHandler.CreateTask)
-	e.PATCH("/tasks/:id", taskHandler.UpdateTask)
-	e.DELETE("/tasks/:id", taskHandler.DeleteTask)
+	// Прикол для работы в echo. Передаем и регистрируем хендлер в echo
+	strictHandler := tasks.NewStrictHandler(handler, nil) // тут будет ошибка
+	tasks.RegisterHandlers(e, strictHandler)
 
-	e.Start("localhost:8080")
+	if err := e.Start(":8080"); err != nil {
+		log.Fatalf("failed to start with err: %v", err)
+	}
 }
