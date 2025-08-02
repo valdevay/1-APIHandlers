@@ -7,6 +7,10 @@ type TaskService interface {
 	GetAllTasks() ([]Task, error)
 }
 
+func (s *TasksService) PatchTask(id int, updatedTask Task) (Task, error) {
+	return s.UpdateTask(id, updatedTask)
+}
+
 type TasksService struct {
 	TaskRepository
 }

@@ -4,7 +4,7 @@ import (
 	"context"
 
 	taskservice "github.com/valdevay/1-APIHandlers/internal/taskService"
-	"google.golang.org/api/tasks/v1"
+	"github.com/valdevay/1-APIHandlers/internal/web/tasks"
 )
 
 type TaskHandler struct {
@@ -29,9 +29,9 @@ func (h *TaskHandler) GetTasks(_ context.Context, _ tasks.GetTasksRequestObject)
 	// Заполняем слайс response всеми задачами из БД
 	for _, tsk := range allTasks {
 		task := tasks.Task{
-			ID:     &tsk.ID,
-			Task:   &tsk.Task,
-			IsDone: &tsk.IsDone,
+			Id:     uint(tsk.ID),
+			Task:   tsk.Task,
+			IsDone: tsk.IsDone,
 		}
 		response = append(response, task)
 	}
@@ -45,8 +45,8 @@ func (h *TaskHandler) PostTasks(_ context.Context, request tasks.PostTasksReques
 	taskRequest := request.Body
 	// Обращаемся к сервису и создаем задачу
 	taskToCreate := taskservice.Task{
-		Task:   *taskRequest.Task,
-		IsDone: *taskRequest.IsDone,
+		Task:   taskRequest.Task,
+		IsDone: taskRequest.IsDone,
 	}
 	createdTask, err := h.service.CreateTask(taskToCreate)
 
@@ -55,119 +55,45 @@ func (h *TaskHandler) PostTasks(_ context.Context, request tasks.PostTasksReques
 	}
 	// создаем структуру респонс
 	response := tasks.PostTasks201JSONResponse{
-		ID:     &createdTask.ID,
-		Task:   &createdTask.Task,
-		IsDone: &createdTask.IsDone,
+		Id:     uint(createdTask.ID),
+		Task:   createdTask.Task,
+		IsDone: createdTask.IsDone,
 	}
 	// Просто возвращаем респонс!
 	return response, nil
 }
 
-func (h *TaskHandler) UpdateTask(_ context.Context, request tasks.UpdateTasksRequestObject) (tasks.UpdateTaskResponseObject, error) {
+func (h *TaskHandler) PatchTasksId(_ context.Context, request tasks.PatchTasksIdRequestObject) (tasks.PatchTasksIdResponseObject, error) {
 	// Распаковываем тело запроса напрямую, без декодера!
 	taskRequest := request.Body
 	// Обращаемся к сервису и создаем задачу
 	taskToUpdate := taskservice.Task{
-		Task:   *taskRequest.Task,
-		IsDone: *taskRequest.IsDone,
+		Task:   taskRequest.Task,
+		IsDone: taskRequest.IsDone,
 	}
-	updateTask, err := h.service.UpdateTask(taskToUpdate)
+	updateTask, err := h.service.UpdateTask(int(request.Id), taskToUpdate)
 
 	if err != nil {
 		return nil, err
 	}
-	// создаем структуру респонс
-	response := tasks.UpdateTasks201JSONResponse{
-		ID:     &updateTask.ID,
-		Task:   &updateTask.Task,
-		IsDone: &updateTask.IsDone,
+
+	response := tasks.PatchTasksId200JSONResponse{
+		Id:     uint(updateTask.ID),
+		Task:   updateTask.Task,
+		IsDone: updateTask.IsDone,
 	}
-	// Просто возвращаем респонс!
+
 	return response, nil
 }
 
-func (h *TaskHandler) DeleteTasks(_ context.Context, request tasks.DeleteTasksRequestObject) (tasks.DeleteTasksResponseObject, error) {
-	// Распаковываем тело запроса напрямую, без декодера!
-	taskRequest := request.Body
-	// Обращаемся к сервису и создаем задачу
-	taskToDelete := taskservice.Task{
-		ID: *taskRequest.id,
-	}
-	deleteTask, err := h.service.DeleteTask(taskToDelete)
+func (h *TaskHandler) DeleteTasksId(_ context.Context, request tasks.DeleteTasksIdRequestObject) (tasks.DeleteTasksIdResponseObject, error) {
+
+	err := h.service.DeleteTask(int(request.Id))
 	if err != nil {
 		return nil, err
 	}
 	// создаем структуру респонс
-	response := tasks.DeleteTasks201JSONResponse{
-		ID:     &deleteTask.ID,
-		Task:   &deleteTask.Task,
-		IsDone: &deleteTask.IsDone,
-	}
+	response := tasks.DeleteTasksId204Response{}
 	// Просто возвращаем респонс!
 	return response, nil
 }
-
-// func (h *TaskHandler) GetTasks(c echo.Context) error {
-
-// 	tasks, err := h.service.(interface {
-// 		GetAllTasks() ([]taskservice.Task, error)
-// 	}).GetAllTasks()
-// 	if err != nil {
-// 		return c.JSON(http.StatusInternalServerError, map[string]string{"error": "Could not fetch tasks"})
-// 	}
-// 	return c.JSON(http.StatusOK, tasks)
-// }
-
-// func (h *TaskHandler) CreateTask(c echo.Context) error {
-// 	var requestBody taskservice.RequestBody
-// 	if err := c.Bind(&requestBody); err != nil {
-// 		return c.JSON(http.StatusBadRequest, map[string]string{"error": "Bad JSON"})
-// 	}
-
-// 	task := taskservice.Task{Task: requestBody.Task, IsDone: requestBody.IsDone}
-// 	createdTask, err := h.service.CreateTask(task)
-// 	if err != nil {
-// 		return c.JSON(http.StatusInternalServerError, map[string]string{"error": "Could not create task"})
-// 	}
-
-// 	return c.JSON(http.StatusCreated, createdTask)
-// }
-
-// func (h *TaskHandler) UpdateTask(c echo.Context) error {
-// 	idParam := c.Param("id")
-// 	id, err := strconv.Atoi(idParam)
-// 	if err != nil {
-// 		return c.JSON(http.StatusBadRequest, map[string]string{"error": "Bad task ID"})
-// 	}
-
-// 	var requestBody taskservice.RequestBody
-// 	if err := c.Bind(&requestBody); err != nil {
-// 		return c.JSON(http.StatusBadRequest, map[string]string{"error": "Bad JSON"})
-// 	}
-
-// 	task := taskservice.Task{
-// 		Task:   requestBody.Task,
-// 		IsDone: requestBody.IsDone,
-// 	}
-
-// 	updatedTask, err := h.service.UpdateTask(id, task)
-// 	if err != nil {
-// 		return c.JSON(http.StatusInternalServerError, map[string]string{"error": "Could not update task"})
-// 	}
-
-// 	return c.JSON(http.StatusOK, updatedTask)
-// }
-
-// func (h *TaskHandler) DeleteTask(c echo.Context) error {
-// 	idParam := c.Param("id")
-// 	id, err := strconv.Atoi(idParam)
-// 	if err != nil {
-// 		return c.JSON(http.StatusBadRequest, map[string]string{"error": "Bad task ID"})
-// 	}
-
-// 	if err := h.service.DeleteTask(id); err != nil {
-// 		return c.JSON(http.StatusInternalServerError, map[string]string{"error": "Could not delete task"})
-// 	}
-
-// 	return c.NoContent(http.StatusNoContent)
-// }

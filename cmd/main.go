@@ -8,6 +8,7 @@ import (
 	"github.com/valdevay/1-APIHandlers/internal/db"
 	"github.com/valdevay/1-APIHandlers/internal/handlers"
 	taskservice "github.com/valdevay/1-APIHandlers/internal/taskService"
+	"github.com/valdevay/1-APIHandlers/internal/web/tasks"
 )
 
 func main() {
@@ -28,6 +29,7 @@ func main() {
 
 	// Прикол для работы в echo. Передаем и регистрируем хендлер в echo
 	strictHandler := tasks.NewStrictHandler(handler, nil) // тут будет ошибка
+
 	tasks.RegisterHandlers(e, strictHandler)
 
 	if err := e.Start(":8080"); err != nil {

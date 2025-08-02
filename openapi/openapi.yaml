@@ -28,7 +28,7 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/Task'
-      responses:  # Отступ исправлен
+      responses:
         '201':
           description: The created task
           content:
