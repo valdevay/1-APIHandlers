@@ -1,27 +1,102 @@
 package handlers
 
 import (
-	"internal/userService"
+	"context"
 
-	"github.com/labstack/echo/v4"
+	"github.com/valdevay/1-APIHandlers/internal/userService"
+	"github.com/valdevay/1-APIHandlers/internal/web/users"
 )
 
 type UserHandler struct {
 	service userService.UserService
 }
 
-func (h *UserHandler) GetUsers(c echo.Context) error {
-	// реализация
+func NewUserHandler(service userService.UserService) *UserHandler {
+	return &UserHandler{service: service}
 }
 
-func (h *UserHandler) PostUser(c echo.Context) error {
-	// реализация
+func (h *UserHandler) GetUsers(ctx context.Context, request users.GetUsersRequestObject) (users.GetUsersResponseObject, error) {
+	userList, err := h.service.GetAllUsers()
+	if err != nil {
+		return nil, err
+	}
+
+	// Convert our internal User type to the generated User type
+	var responseUsers []users.User
+	for _, user := range userList {
+		responseUser := users.User{
+			Id:        uint(user.ID),
+			Email:     user.Email,
+			Password:  user.Password,
+			CreatedAt: user.CreatedAt,
+			UpdatedAt: user.UpdatedAt,
+			DeletedAt: user.DeletedAt,
+		}
+		responseUsers = append(responseUsers, responseUser)
+	}
+
+	return users.GetUsers200JSONResponse(responseUsers), nil
 }
 
-func (h *UserHandler) PatchUserByID(c echo.Context) error {
-	// реализация
+func (h *UserHandler) PostUsers(ctx context.Context, request users.PostUsersRequestObject) (users.PostUsersResponseObject, error) {
+	if request.Body == nil {
+		return users.PostUsers201JSONResponse{}, nil
+	}
+
+	user := userService.User{
+		Email:    request.Body.Email,
+		Password: request.Body.Password,
+	}
+
+	createdUser, err := h.service.CreateUser(user)
+	if err != nil {
+		return nil, err
+	}
+
+	responseUser := users.User{
+		Id:        uint(createdUser.ID),
+		Email:     createdUser.Email,
+		Password:  createdUser.Password,
+		CreatedAt: createdUser.CreatedAt,
+		UpdatedAt: createdUser.UpdatedAt,
+		DeletedAt: createdUser.DeletedAt,
+	}
+
+	return users.PostUsers201JSONResponse(responseUser), nil
 }
 
-func (h *UserHandler) DeleteUserByID(c echo.Context) error {
-	// реализация
+func (h *UserHandler) PatchUsersId(ctx context.Context, request users.PatchUsersIdRequestObject) (users.PatchUsersIdResponseObject, error) {
+	if request.Body == nil {
+		return users.PatchUsersId200JSONResponse{}, nil
+	}
+
+	user := userService.User{
+		Email:    request.Body.Email,
+		Password: request.Body.Password,
+	}
+
+	updatedUser, err := h.service.UpdateUser(int(request.Id), user)
+	if err != nil {
+		return nil, err
+	}
+
+	responseUser := users.User{
+		Id:        uint(updatedUser.ID),
+		Email:     updatedUser.Email,
+		Password:  updatedUser.Password,
+		CreatedAt: updatedUser.CreatedAt,
+		UpdatedAt: updatedUser.UpdatedAt,
+		DeletedAt: updatedUser.DeletedAt,
+	}
+
+	return users.PatchUsersId200JSONResponse(responseUser), nil
+}
+
+func (h *UserHandler) DeleteUsersId(ctx context.Context, request users.DeleteUsersIdRequestObject) (users.DeleteUsersIdResponseObject, error) {
+	err := h.service.DeleteUser(int(request.Id))
+	if err != nil {
+		return nil, err
+	}
+
+	return users.DeleteUsersId204Response{}, nil
 }

@@ -1,18 +1,19 @@
-package userservice
+package userService
 
-type UserORM struct {
-	// методы для работы с БД
+import (
+	"time"
+)
+
+type User struct {
+	ID        int        `json:"id" gorm:"primaryKey"`
+	Email     string     `json:"email" gorm:"uniqueIndex;not null"`
+	Password  string     `json:"password" gorm:"not null"`
+	CreatedAt time.Time  `json:"created_at" gorm:"not null;default:CURRENT_TIMESTAMP"`
+	UpdatedAt time.Time  `json:"updated_at" gorm:"not null;default:CURRENT_TIMESTAMP"`
+	DeletedAt *time.Time `json:"deleted_at" gorm:"index"`
 }
 
-// repository.go
-type UserRepository interface {
-	GetAll() ([]User, error)
-	Create(user User) (User, error)
-	Update(id uint, user User) (User, error)
-	Delete(id uint) error
-}
-
-// service.go
-type UserService struct {
-	repo UserRepository
+type UserRequest struct {
+	Email    string `json:"email"`
+	Password string `json:"password"`
 }
