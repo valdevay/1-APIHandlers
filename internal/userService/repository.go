@@ -23,7 +23,7 @@ func NewUserRepository(db *gorm.DB) UserRepository {
 }
 
 func (r *UserRepo) GetAllUsers() ([]User, error) {
-	var users []User
+	users := make([]User, 0)
 	err := r.db.Where("deleted_at IS NULL").Find(&users).Error
 	return users, err
 }
