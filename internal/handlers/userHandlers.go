@@ -21,16 +21,12 @@ func (h *UserHandler) GetUsers(ctx context.Context, request users.GetUsersReques
 		return nil, err
 	}
 
-	// Convert our internal User type to the generated User type
-	var responseUsers []users.User
+	responseUsers := make([]users.User, 0)
 	for _, user := range userList {
 		responseUser := users.User{
-			Id:        uint(user.ID),
-			Email:     user.Email,
-			Password:  user.Password,
-			CreatedAt: user.CreatedAt,
-			UpdatedAt: user.UpdatedAt,
-			DeletedAt: user.DeletedAt,
+			Id:       uint(user.ID),
+			Email:    user.Email,
+			Password: user.Password,
 		}
 		responseUsers = append(responseUsers, responseUser)
 	}
@@ -54,12 +50,9 @@ func (h *UserHandler) PostUsers(ctx context.Context, request users.PostUsersRequ
 	}
 
 	responseUser := users.User{
-		Id:        uint(createdUser.ID),
-		Email:     createdUser.Email,
-		Password:  createdUser.Password,
-		CreatedAt: createdUser.CreatedAt,
-		UpdatedAt: createdUser.UpdatedAt,
-		DeletedAt: createdUser.DeletedAt,
+		Id:       uint(createdUser.ID),
+		Email:    createdUser.Email,
+		Password: createdUser.Password,
 	}
 
 	return users.PostUsers201JSONResponse(responseUser), nil
@@ -81,12 +74,9 @@ func (h *UserHandler) PatchUsersId(ctx context.Context, request users.PatchUsers
 	}
 
 	responseUser := users.User{
-		Id:        uint(updatedUser.ID),
-		Email:     updatedUser.Email,
-		Password:  updatedUser.Password,
-		CreatedAt: updatedUser.CreatedAt,
-		UpdatedAt: updatedUser.UpdatedAt,
-		DeletedAt: updatedUser.DeletedAt,
+		Id:       uint(updatedUser.ID),
+		Email:    updatedUser.Email,
+		Password: updatedUser.Password,
 	}
 
 	return users.PatchUsersId200JSONResponse(responseUser), nil
