@@ -5,6 +5,7 @@ type TaskService interface {
 	UpdateTask(id int, task Task) (Task, error)
 	DeleteTask(id int) error
 	GetAllTasks() ([]Task, error)
+	GetTasksByUserID(userID uint) ([]Task, error)
 }
 
 func (s *TasksService) PatchTask(id int, updatedTask Task) (Task, error) {
@@ -29,4 +30,8 @@ func (s *TasksService) UpdateTask(id int, task Task) (Task, error) {
 
 func (s *TasksService) DeleteTask(id int) error {
 	return s.TaskRepository.DeleteTask(id)
+}
+
+func (s *TasksService) GetTasksByUserID(userID uint) ([]Task, error) {
+	return s.TaskRepository.GetTasksByUserID(userID)
 }

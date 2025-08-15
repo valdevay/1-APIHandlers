@@ -34,6 +34,21 @@ func (h *UserHandler) GetUsers(ctx context.Context, request users.GetUsersReques
 	return users.GetUsers200JSONResponse(responseUsers), nil
 }
 
+func (h *UserHandler) GetUsersId(ctx context.Context, request users.GetUsersIdRequestObject) (users.GetUsersIdResponseObject, error) {
+	user, err := h.service.GetUserByID(int(request.Id))
+	if err != nil {
+		return users.GetUsersId404Response{}, nil
+	}
+
+	responseUser := users.User{
+		Id:       uint(user.ID),
+		Email:    user.Email,
+		Password: user.Password,
+	}
+
+	return users.GetUsersId200JSONResponse(responseUser), nil
+}
+
 func (h *UserHandler) PostUsers(ctx context.Context, request users.PostUsersRequestObject) (users.PostUsersResponseObject, error) {
 	if request.Body == nil {
 		return users.PostUsers201JSONResponse{}, nil
@@ -75,8 +90,8 @@ func (h *UserHandler) PatchUsersId(ctx context.Context, request users.PatchUsers
 
 	responseUser := users.User{
 		Id:       uint(updatedUser.ID),
-		Email:    updatedUser.Email,
 		Password: updatedUser.Password,
+		Email:    updatedUser.Email,
 	}
 
 	return users.PatchUsersId200JSONResponse(responseUser), nil

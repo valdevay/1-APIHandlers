@@ -32,6 +32,7 @@ func (h *TaskHandler) GetTasks(_ context.Context, _ tasks.GetTasksRequestObject)
 			Id:     uint(tsk.ID),
 			Task:   tsk.Task,
 			IsDone: tsk.IsDone,
+			UserId: tsk.UserID,
 		}
 		response = append(response, task)
 	}
@@ -47,6 +48,7 @@ func (h *TaskHandler) PostTasks(_ context.Context, request tasks.PostTasksReques
 	taskToCreate := taskservice.Task{
 		Task:   taskRequest.Task,
 		IsDone: taskRequest.IsDone,
+		UserID: taskRequest.UserId,
 	}
 	createdTask, err := h.service.CreateTask(taskToCreate)
 
@@ -58,6 +60,7 @@ func (h *TaskHandler) PostTasks(_ context.Context, request tasks.PostTasksReques
 		Id:     uint(createdTask.ID),
 		Task:   createdTask.Task,
 		IsDone: createdTask.IsDone,
+		UserId: createdTask.UserID,
 	}
 	// Просто возвращаем респонс!
 	return response, nil
@@ -70,6 +73,7 @@ func (h *TaskHandler) PatchTasksId(_ context.Context, request tasks.PatchTasksId
 	taskToUpdate := taskservice.Task{
 		Task:   taskRequest.Task,
 		IsDone: taskRequest.IsDone,
+		UserID: taskRequest.UserId,
 	}
 	updateTask, err := h.service.UpdateTask(int(request.Id), taskToUpdate)
 
@@ -81,6 +85,31 @@ func (h *TaskHandler) PatchTasksId(_ context.Context, request tasks.PatchTasksId
 		Id:     uint(updateTask.ID),
 		Task:   updateTask.Task,
 		IsDone: updateTask.IsDone,
+		UserId: updateTask.UserID,
+	}
+
+	return response, nil
+}
+
+func (h *TaskHandler) GetTasksUserUserId(_ context.Context, request tasks.GetTasksUserUserIdRequestObject) (tasks.GetTasksUserUserIdResponseObject, error) {
+	// Получение задач конкретного пользователя из сервиса
+	userTasks, err := h.service.GetTasksByUserID(request.UserId)
+	if err != nil {
+		return tasks.GetTasksUserUserId404Response{}, nil
+	}
+
+	// Создаем переменную респон типа 200джейсонРеспонс
+	response := tasks.GetTasksUserUserId200JSONResponse{}
+
+	// Заполняем слайс response задачами пользователя из БД
+	for _, tsk := range userTasks {
+		task := tasks.Task{
+			Id:     uint(tsk.ID),
+			Task:   tsk.Task,
+			IsDone: tsk.IsDone,
+			UserId: tsk.UserID,
+		}
+		response = append(response, task)
 	}
 
 	return response, nil

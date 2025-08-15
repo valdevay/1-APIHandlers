@@ -26,7 +26,7 @@ func main() {
 
 	// Users
 	userRepo := userservice.NewUserRepository(database)
-	userService := userservice.NewUserService(userRepo)
+	userService := userservice.NewUserService(userRepo, tasksService)
 	userHandler := handlers.NewUserHandler(userService)
 
 	e := echo.New()
