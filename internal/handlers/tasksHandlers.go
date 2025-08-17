@@ -16,17 +16,14 @@ func NewTaskHandler(s taskservice.TaskService) *TaskHandler {
 }
 
 func (h *TaskHandler) GetTasks(_ context.Context, _ tasks.GetTasksRequestObject) (tasks.GetTasksResponseObject, error) {
-	// Получение всех задач из сервиса
+
 	allTasks, err := h.service.GetAllTasks()
 	if err != nil {
 		return nil, err
 	}
 
-	// Создаем переменную респон типа 200джейсонРеспонс
-	// Которую мы потом передадим в качестве ответа
 	response := tasks.GetTasks200JSONResponse{}
 
-	// Заполняем слайс response всеми задачами из БД
 	for _, tsk := range allTasks {
 		task := tasks.Task{
 			Id:     uint(tsk.ID),
@@ -37,14 +34,13 @@ func (h *TaskHandler) GetTasks(_ context.Context, _ tasks.GetTasksRequestObject)
 		response = append(response, task)
 	}
 
-	// САМОЕ ПРЕКРАСНОЕ. Возвращаем просто респонс и nil!
 	return response, nil
 }
 
 func (h *TaskHandler) PostTasks(_ context.Context, request tasks.PostTasksRequestObject) (tasks.PostTasksResponseObject, error) {
-	// Распаковываем тело запроса напрямую, без декодера!
+
 	taskRequest := request.Body
-	// Обращаемся к сервису и создаем задачу
+
 	taskToCreate := taskservice.Task{
 		Task:   taskRequest.Task,
 		IsDone: taskRequest.IsDone,
@@ -55,21 +51,21 @@ func (h *TaskHandler) PostTasks(_ context.Context, request tasks.PostTasksReques
 	if err != nil {
 		return nil, err
 	}
-	// создаем структуру респонс
+
 	response := tasks.PostTasks201JSONResponse{
 		Id:     uint(createdTask.ID),
 		Task:   createdTask.Task,
 		IsDone: createdTask.IsDone,
 		UserId: createdTask.UserID,
 	}
-	// Просто возвращаем респонс!
+
 	return response, nil
 }
 
 func (h *TaskHandler) PatchTasksId(_ context.Context, request tasks.PatchTasksIdRequestObject) (tasks.PatchTasksIdResponseObject, error) {
-	// Распаковываем тело запроса напрямую, без декодера!
+
 	taskRequest := request.Body
-	// Обращаемся к сервису и создаем задачу
+
 	taskToUpdate := taskservice.Task{
 		Task:   taskRequest.Task,
 		IsDone: taskRequest.IsDone,
@@ -91,17 +87,15 @@ func (h *TaskHandler) PatchTasksId(_ context.Context, request tasks.PatchTasksId
 	return response, nil
 }
 
-func (h *TaskHandler) GetTasksUserUserId(_ context.Context, request tasks.GetTasksUserUserIdRequestObject) (tasks.GetTasksUserUserIdResponseObject, error) {
-	// Получение задач конкретного пользователя из сервиса
+func (h *TaskHandler) GetUsersUserIdTasks(_ context.Context, request tasks.GetUsersUserIdTasksRequestObject) (tasks.GetUsersUserIdTasksResponseObject, error) {
+
 	userTasks, err := h.service.GetTasksByUserID(request.UserId)
 	if err != nil {
-		return tasks.GetTasksUserUserId404Response{}, nil
+		return tasks.GetUsersUserIdTasks404Response{}, nil
 	}
 
-	// Создаем переменную респон типа 200джейсонРеспонс
-	response := tasks.GetTasksUserUserId200JSONResponse{}
+	response := tasks.GetUsersUserIdTasks200JSONResponse{}
 
-	// Заполняем слайс response задачами пользователя из БД
 	for _, tsk := range userTasks {
 		task := tasks.Task{
 			Id:     uint(tsk.ID),
@@ -121,8 +115,8 @@ func (h *TaskHandler) DeleteTasksId(_ context.Context, request tasks.DeleteTasks
 	if err != nil {
 		return nil, err
 	}
-	// создаем структуру респонс
+
 	response := tasks.DeleteTasksId204Response{}
-	// Просто возвращаем респонс!
+
 	return response, nil
 }
